@@ -25,7 +25,7 @@ void printVecVec(std::vector<std::vector<double>> vecVec) {
   }
 }
 
-double cartesianDistance(std::vector<double> a, std::vector<double> b) {
+double cartesianDistance(std::vector<double>& a, std::vector<double>& b) {
   double sqsum{0};
   for (int i{0}; i < a.size(); i++) {
     sqsum += std::pow((a[i] - b[i]), 2);
@@ -40,7 +40,7 @@ struct ClusterResult {
 };
 
 std::vector<std::vector<double>>
-initkpp(int nClusters, std::vector<std::vector<double>> points) {
+initkpp(int nClusters, std::vector<std::vector<double>>& points) {
   std::vector<std::vector<double>> centroids;
 
   std::random_device rd;
@@ -78,7 +78,7 @@ initkpp(int nClusters, std::vector<std::vector<double>> points) {
   return centroids;
 }
 
-std::vector<double> addVec(std::vector<double> a, std::vector<double> b) {
+std::vector<double> addVec(std::vector<double>& a, std::vector<double>& b) {
   std::vector<double> c;
   for (int vIdx{0}; vIdx < a.size(); vIdx++) {
     c.push_back(a[vIdx] + b[vIdx]);
@@ -86,7 +86,7 @@ std::vector<double> addVec(std::vector<double> a, std::vector<double> b) {
   return c;
 }
 
-std::vector<double> scalarDivide(std::vector<double> vec, double scalar) {
+std::vector<double> scalarDivide(std::vector<double>& vec, double scalar) {
   std::vector<double> newVec;
   for (int vIdx{0}; vIdx < vec.size(); vIdx++) {
     newVec.push_back(vec[vIdx] / scalar);
@@ -95,7 +95,7 @@ std::vector<double> scalarDivide(std::vector<double> vec, double scalar) {
 }
 
 std::vector<std::vector<double>>
-updateCentroids(std::vector<std::vector<std::vector<double>>> clusters) {
+updateCentroids(std::vector<std::vector<std::vector<double>>>& clusters) {
   std::vector<std::vector<double>> newCentroids;
   for (int cIdx{0}; cIdx < clusters.size(); cIdx++) {
     std::vector<double> newCentroid;
@@ -116,7 +116,7 @@ updateCentroids(std::vector<std::vector<std::vector<double>>> clusters) {
   return newCentroids;
 }
 
-ClusterResult kMeans(std::vector<std::vector<double>> data, int nClusters) {
+ClusterResult kMeans(std::vector<std::vector<double>>& data, int nClusters) {
   std::vector<std::vector<double>> centroids = initkpp(nClusters, data);
   std::vector<std::vector<std::vector<double>>> clusters;
   bool converged = false;
