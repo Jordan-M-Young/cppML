@@ -1,0 +1,5 @@
+scratch sheet for centroid verification on 150 iris samples with 3 centroids
+
+[ 5.90161 2.74839 4.39355 1.43387 ]
+[ 5.006 3.418 1.464 0.244 ]
+[ 6.85 3.07368 5.74211 2.07105 ]

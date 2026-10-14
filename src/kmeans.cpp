@@ -8,19 +8,21 @@
 #include <random>
 #include <sstream>
 #include <string>
-#include <vector>
 
-void printVec(std::vector<double> vec) {
+
+template <int Cols>
+void printVec(std::array<double,Cols> vec) {
   std::cout << "[ ";
-  for (int i{0}; i < vec.size(); i++) {
+  for (int i{0}; i < Cols; i++) {
     std::cout << vec[i] << " ";
   }
   std::cout << "]" << "\n";
 }
 
-void printVecVec(std::vector<std::vector<double>> vecVec) {
-  for (int i{0}; i < vecVec.size(); i++) {
-    printVec(vecVec[i]);
+template <int Rows, int Cols>
+void printVecVec(std::array<std::array<double,Cols>,Rows> vecVec) {
+  for (int i{0}; i < Rows; i++) {
+    printVec<Cols>(vecVec[i]);
   }
 }
 
@@ -163,9 +165,10 @@ ClusterResult kMeans(std::vector<std::vector<double>> &data, int nClusters) {
   return ClusterResult{centroids, clusters, nClusters};
 }
 
-std::vector<std::vector<std::string>> loadCSV(const char *filepath) {
+template <int Rows, int Cols>
+std::array<std::array<std::string,Cols>,Rows> loadCSV(const char *filepath) {
 
-  std::vector<std::vector<std::string>> content;
+  std::array<std::array<std::string, Cols>, Rows> content;
   std::string line, word;
 
   std::fstream file(filepath);
@@ -174,16 +177,21 @@ std::vector<std::vector<std::string>> loadCSV(const char *filepath) {
     return content;
   }
 
+
+  int rowCount{0};
   // Read file line by line
   while (std::getline(file, line)) {
-    std::vector<std::string> row;
+    std::array<std::string, Cols> row;
     std::stringstream ss(line);
 
+    int colCount{0};
     // Split each line by comma
     while (std::getline(ss, word, ',')) {
-      row.push_back(word);
+      row[colCount] = word;
+      colCount += 1;
     }
-    content.push_back(row);
+    content[rowCount] = row;
+    rowCount += 1;
   }
 
   file.close();
@@ -191,30 +199,34 @@ std::vector<std::vector<std::string>> loadCSV(const char *filepath) {
   return content;
 }
 
-void printVecString(std::vector<std::string> &vec) {
+
+template <int Cols>
+void printVecString(std::array<std::string,Cols> &vec) {
   std::cout << "[";
-  for (int idx{0}; idx < vec.size(); idx++) {
+  for (int idx{0}; idx < Cols; idx++) {
     std::cout << " " << vec[idx];
   }
   std::cout << " ]" << "\n";
 }
 
-void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
-  for (int idx{0}; idx < vecVec.size(); idx++) {
-    printVecString(vecVec[idx]);
+template <int Rows, int Cols>
+void printVecVecString(std::array<std::array<std::string,Cols>,Rows> &vecVec) {
+  for (int idx{0}; idx < Rows; idx++) {
+    printVecString<Cols>(vecVec[idx]);
   }
 }
 
-std::vector<std::vector<double>>
-loadNumericFeatures(std::vector<std::vector<std::string>> data) {
-  std::vector<std::vector<double>> numericFeatures;
+template <int Rows, int Cols, int Rows2Keep, int Cols2Keep>
+std::array<std::array<double,Cols2Keep>,Rows2Keep>loadNumericFeatures(std::array<std::array<std::string,Cols>, Rows> data) {
+  std::array<std::array<double,Cols2Keep>,Rows2Keep> numericFeatures;
 
-  for (int idx{1}; idx < data.size(); idx++) {
-    std::vector<double> row;
-    for (int jdx{1}; jdx < 5; jdx++) {
-      row.push_back(std::stod(data[idx][jdx]));
+  for (int idx{1}; idx < Rows2Keep+1; idx++) {
+    std::array<double,Cols2Keep> row;
+
+    for (int jdx{1}; jdx < Cols2Keep+1; jdx++) {
+      row[jdx-1]= std::stod(data[idx][jdx]);
     }
-    numericFeatures.push_back(row);
+    numericFeatures[idx-1] = row;
   }
 
   return numericFeatures;
@@ -248,33 +260,45 @@ int main() {
   //    {5.0, 6.0}, {7.0, 8.0}};
 
   int nClusters = 3;
+  constexpr int nDataPoints = 150;
+  constexpr int nDataColumns = 6;
+
+
   const char *filepath = "./data/iris.csv";
-  std::vector<std::vector<std::string>> data = loadCSV(filepath);
-  std::vector<std::vector<double>> numericFeatures = loadNumericFeatures(data);
-  std::cout << "Kmeans" << '\n';
-  std::cout << "--------------" << "\n";
+  std::array<std::array<std::string, nDataColumns>, nDataPoints+1> data = loadCSV<nDataPoints+1, nDataColumns>(filepath);
+  printVecVecString<nDataPoints+1, nDataColumns>(data);
 
-  int iterations = 1000;
-  double sum{0};
-  std::vector<double> samples;
-  for (int idx{0}; idx < iterations; idx++) {
-    auto start = std::chrono::steady_clock::now();
-    ClusterResult res = kMeans(numericFeatures, nClusters);
-    auto end = std::chrono::steady_clock::now();
-    std::chrono::duration<double, std::milli> dur = end - start;
-    std::vector<std::vector<double>> centroids = res.centroids;
-    std::vector<std::vector<std::vector<double>>> clusters = res.clusters;
 
-    // std::cout << "Total Time (ns): " << dur.count() << "\n";
-    double duration = dur.count();
-    sum += duration;
-    samples.push_back(duration);
-  }
 
-  double stDev = getStDev(samples);
-  std::cout << "Data Size: " << numericFeatures.size() << " elements" << "\n";
-  std::cout << "N Clusters: " << nClusters << "\n";
-  std::cout << "Total Time (ms): " << sum << "\n";
-  std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
-  std::cout << "StDev (ms): +/- " << stDev << "\n";
+  std::array<std::array<double,nDataColumns-2>,nDataPoints> numericFeatures = loadNumericFeatures<nDataPoints+1,nDataColumns,nDataPoints,nDataColumns-2>(data);
+  printVecVec<nDataPoints,nDataColumns-2>(numericFeatures);
+
+
+
+  // std::cout << "Kmeans" << '\n';
+  // std::cout << "--------------" << "\n";
+
+  // int iterations = 1000;
+  // double sum{0};
+  // std::vector<double> samples;
+  // for (int idx{0}; idx < iterations; idx++) {
+  //   auto start = std::chrono::steady_clock::now();
+  //   ClusterResult res = kMeans(numericFeatures, nClusters);
+  //   auto end = std::chrono::steady_clock::now();
+  //   std::chrono::duration<double, std::milli> dur = end - start;
+  //   std::vector<std::vector<double>> centroids = res.centroids;
+  //   std::vector<std::vector<std::vector<double>>> clusters = res.clusters;
+
+  //   // std::cout << "Total Time (ns): " << dur.count() << "\n";
+  //   double duration = dur.count();
+  //   sum += duration;
+  //   samples.push_back(duration);
+  // }
+
+  // double stDev = getStDev(samples);
+  // std::cout << "Data Size: " << numericFeatures.size() << " elements" << "\n";
+  // std::cout << "N Clusters: " << nClusters << "\n";
+  // std::cout << "Total Time (ms): " << sum << "\n";
+  // std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
+  // std::cout << "StDev (ms): +/- " << stDev << "\n";
 }
