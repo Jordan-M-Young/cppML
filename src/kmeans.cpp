@@ -41,6 +41,7 @@ struct ClusterResult {
 std::vector<std::vector<double>>
 initkpp(int nClusters, std::vector<std::vector<double>> &points) {
   std::vector<std::vector<double>> centroids;
+  centroids.reserve(nClusters);
 
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -51,8 +52,10 @@ initkpp(int nClusters, std::vector<std::vector<double>> &points) {
 
   for (int i{1}; i < nClusters; i++) {
     std::vector<double> dists;
+    size_t npts = points.size();
+    dists.reserve(npts);
 
-    for (int j{0}; j < points.size(); j++) {
+    for (int j{0}; j < npts; j++) {
       std::vector<double> pt = points[j];
       double d = DBL_MAX;
 
@@ -65,7 +68,7 @@ initkpp(int nClusters, std::vector<std::vector<double>> &points) {
     double mx = 0.0;
     int mxIdx;
 
-    for (int j{0}; j < dists.size(); j++) {
+    for (int j{0}; j < npts; j++) {
       if (dists[j] > mx) {
         mx = dists[j];
         mxIdx = j;
@@ -79,7 +82,9 @@ initkpp(int nClusters, std::vector<std::vector<double>> &points) {
 
 std::vector<double> addVec(std::vector<double> &a, std::vector<double> &b) {
   std::vector<double> c;
-  for (int vIdx{0}; vIdx < a.size(); vIdx++) {
+  size_t nElements = a.size();
+  c.reserve(nElements);
+  for (int vIdx{0}; vIdx < nElements; vIdx++) {
     c.push_back(a[vIdx] + b[vIdx]);
   }
   return c;
@@ -94,8 +99,10 @@ std::vector<double> scalarDivide(std::vector<double> &vec, double scalar) {
 }
 
 std::vector<std::vector<double>>
-updateCentroids(std::vector<std::vector<std::vector<double>>> &clusters) {
+updateCentroids(std::vector<std::vector<std::vector<double>>> &clusters, int nClusters) {
   std::vector<std::vector<double>> newCentroids;
+  newCentroids.reserve(nClusters);
+
   for (int cIdx{0}; cIdx < clusters.size(); cIdx++) {
     std::vector<double> newCentroid;
     double count{0.0};
@@ -118,6 +125,7 @@ updateCentroids(std::vector<std::vector<std::vector<double>>> &clusters) {
 ClusterResult kMeans(std::vector<std::vector<double>> &data, int nClusters) {
   std::vector<std::vector<double>> centroids = initkpp(nClusters, data);
   std::vector<std::vector<std::vector<double>>> clusters;
+  
   bool converged = false;
   int count{0};
   while (!converged) {
@@ -143,7 +151,7 @@ ClusterResult kMeans(std::vector<std::vector<double>> &data, int nClusters) {
 
       clusters[minIdx].push_back(point);
     }
-    std::vector<std::vector<double>> newCentroids = updateCentroids(clusters);
+    std::vector<std::vector<double>> newCentroids = updateCentroids(clusters, nClusters);
 
     if (centroids == newCentroids) {
       converged = true;
