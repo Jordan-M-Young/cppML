@@ -2,14 +2,13 @@
 #include <array>
 #include <cfloat>
 #include <cmath>
-#include <iostream>
-#include <random>
-#include <vector>
 #include <ctime>
 #include <fstream>
+#include <iostream>
+#include <random>
 #include <sstream>
 #include <string>
-
+#include <vector>
 
 void printVec(std::vector<double> vec) {
   std::cout << "[ ";
@@ -25,7 +24,7 @@ void printVecVec(std::vector<std::vector<double>> vecVec) {
   }
 }
 
-double cartesianDistance(std::vector<double>& a, std::vector<double>& b) {
+double cartesianDistance(std::vector<double> &a, std::vector<double> &b) {
   double sqsum{0};
   for (int i{0}; i < a.size(); i++) {
     sqsum += std::pow((a[i] - b[i]), 2);
@@ -40,7 +39,7 @@ struct ClusterResult {
 };
 
 std::vector<std::vector<double>>
-initkpp(int nClusters, std::vector<std::vector<double>>& points) {
+initkpp(int nClusters, std::vector<std::vector<double>> &points) {
   std::vector<std::vector<double>> centroids;
 
   std::random_device rd;
@@ -78,7 +77,7 @@ initkpp(int nClusters, std::vector<std::vector<double>>& points) {
   return centroids;
 }
 
-std::vector<double> addVec(std::vector<double>& a, std::vector<double>& b) {
+std::vector<double> addVec(std::vector<double> &a, std::vector<double> &b) {
   std::vector<double> c;
   for (int vIdx{0}; vIdx < a.size(); vIdx++) {
     c.push_back(a[vIdx] + b[vIdx]);
@@ -86,7 +85,7 @@ std::vector<double> addVec(std::vector<double>& a, std::vector<double>& b) {
   return c;
 }
 
-std::vector<double> scalarDivide(std::vector<double>& vec, double scalar) {
+std::vector<double> scalarDivide(std::vector<double> &vec, double scalar) {
   std::vector<double> newVec;
   for (int vIdx{0}; vIdx < vec.size(); vIdx++) {
     newVec.push_back(vec[vIdx] / scalar);
@@ -95,7 +94,7 @@ std::vector<double> scalarDivide(std::vector<double>& vec, double scalar) {
 }
 
 std::vector<std::vector<double>>
-updateCentroids(std::vector<std::vector<std::vector<double>>>& clusters) {
+updateCentroids(std::vector<std::vector<std::vector<double>>> &clusters) {
   std::vector<std::vector<double>> newCentroids;
   for (int cIdx{0}; cIdx < clusters.size(); cIdx++) {
     std::vector<double> newCentroid;
@@ -116,7 +115,7 @@ updateCentroids(std::vector<std::vector<std::vector<double>>>& clusters) {
   return newCentroids;
 }
 
-ClusterResult kMeans(std::vector<std::vector<double>>& data, int nClusters) {
+ClusterResult kMeans(std::vector<std::vector<double>> &data, int nClusters) {
   std::vector<std::vector<double>> centroids = initkpp(nClusters, data);
   std::vector<std::vector<std::vector<double>>> clusters;
   bool converged = false;
@@ -142,9 +141,7 @@ ClusterResult kMeans(std::vector<std::vector<double>>& data, int nClusters) {
       }
       std::vector<double> point = data[pIdx];
 
-
       clusters[minIdx].push_back(point);
-
     }
     std::vector<std::vector<double>> newCentroids = updateCentroids(clusters);
 
@@ -158,86 +155,80 @@ ClusterResult kMeans(std::vector<std::vector<double>>& data, int nClusters) {
   return ClusterResult{centroids, clusters, nClusters};
 }
 
+std::vector<std::vector<std::string>> loadCSV(const char *filepath) {
 
+  std::vector<std::vector<std::string>> content;
+  std::string line, word;
 
-std::vector<std::vector<std::string>> loadCSV(const char* filepath){
-
-    std::vector<std::vector<std::string>> content;
-    std::string line, word;
-
-    std::fstream file(filepath);
-    if (!file.is_open()){
-        std::cout << "FILE : " << filepath << " NOT OPENED." << "\n";
-        return content;
-    }
-
-
-    // Read file line by line
-    while (std::getline(file, line)) {
-        std::vector<std::string> row;
-        std::stringstream ss(line);
-
-        // Split each line by comma
-        while (std::getline(ss, word, ',')) {
-            row.push_back(word);
-        }
-        content.push_back(row);
-    }
-
-    file.close();
-
+  std::fstream file(filepath);
+  if (!file.is_open()) {
+    std::cout << "FILE : " << filepath << " NOT OPENED." << "\n";
     return content;
+  }
 
-}
+  // Read file line by line
+  while (std::getline(file, line)) {
+    std::vector<std::string> row;
+    std::stringstream ss(line);
 
-void printVecString(std::vector<std::string>& vec){
-    std::cout << "[";
-    for (int idx{0}; idx < vec.size(); idx++){
-        std::cout << " " << vec[idx];
+    // Split each line by comma
+    while (std::getline(ss, word, ',')) {
+      row.push_back(word);
     }
-    std::cout << " ]" << "\n";
+    content.push_back(row);
+  }
+
+  file.close();
+
+  return content;
 }
 
-void printVecVecString(std::vector<std::vector<std::string>>& vecVec){
-    for (int idx{0}; idx < vecVec.size(); idx++){
-        printVecString(vecVec[idx]);
+void printVecString(std::vector<std::string> &vec) {
+  std::cout << "[";
+  for (int idx{0}; idx < vec.size(); idx++) {
+    std::cout << " " << vec[idx];
+  }
+  std::cout << " ]" << "\n";
+}
+
+void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
+  for (int idx{0}; idx < vecVec.size(); idx++) {
+    printVecString(vecVec[idx]);
+  }
+}
+
+std::vector<std::vector<double>>
+loadNumericFeatures(std::vector<std::vector<std::string>> data) {
+  std::vector<std::vector<double>> numericFeatures;
+
+  for (int idx{1}; idx < data.size(); idx++) {
+    std::vector<double> row;
+    for (int jdx{1}; jdx < 5; jdx++) {
+      row.push_back(std::stod(data[idx][jdx]));
     }
+    numericFeatures.push_back(row);
+  }
+
+  return numericFeatures;
 }
 
-std::vector<std::vector<double>> loadNumericFeatures(std::vector<std::vector<std::string>> data){
-    std::vector<std::vector<double>> numericFeatures;
-
-    for (int idx{1}; idx < data.size(); idx++){
-        std::vector<double> row;
-        for (int jdx{1}; jdx < 5; jdx++){
-            row.push_back(std::stod(data[idx][jdx]));
-        }
-        numericFeatures.push_back(row);
-
-    }
-
-    return numericFeatures;
-
-}
-
-double getStDev(std::vector<double> samples){
+double getStDev(std::vector<double> samples) {
   double stDev;
   double sum{0.0};
   double sqsum{0.0};
   double avg;
   size_t nsamples = samples.size();
 
-  for (int idx{0}; idx < samples.size(); idx++){
+  for (int idx{0}; idx < samples.size(); idx++) {
     sum += samples[idx];
   }
   avg = sum / samples.size();
 
-
-  for (int idx{0}; idx < nsamples; idx++){
-    samples[idx] =  std::pow(samples[idx] - avg,2);
+  for (int idx{0}; idx < nsamples; idx++) {
+    samples[idx] = std::pow(samples[idx] - avg, 2);
   }
 
-  for (int idx{0}; idx < nsamples; idx++){
+  for (int idx{0}; idx < nsamples; idx++) {
     sqsum += samples[idx];
   }
 
@@ -245,43 +236,37 @@ double getStDev(std::vector<double> samples){
 }
 
 int main() {
-//    std::vector<std::vector<double>>points = {{1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}, {7.0, 8.0}};
+  //    std::vector<std::vector<double>>points = {{1.0, 2.0}, {3.0, 4.0},
+  //    {5.0, 6.0}, {7.0, 8.0}};
 
   int nClusters = 3;
-  const char* filepath = "./data/iris.csv";
+  const char *filepath = "./data/iris.csv";
   std::vector<std::vector<std::string>> data = loadCSV(filepath);
   std::vector<std::vector<double>> numericFeatures = loadNumericFeatures(data);
   std::cout << "Kmeans" << '\n';
   std::cout << "--------------" << "\n";
 
-
   int iterations = 1000;
   double sum{0};
   std::vector<double> samples;
-  for (int idx{0}; idx < iterations; idx++){
+  for (int idx{0}; idx < iterations; idx++) {
     auto start = std::chrono::steady_clock::now();
     ClusterResult res = kMeans(numericFeatures, nClusters);
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::milli> dur = end - start;
     std::vector<std::vector<double>> centroids = res.centroids;
     std::vector<std::vector<std::vector<double>>> clusters = res.clusters;
-  
+
     // std::cout << "Total Time (ns): " << dur.count() << "\n";
     double duration = dur.count();
     sum += duration;
     samples.push_back(duration);
-
-
   }
 
-
-    double stDev = getStDev(samples);
-    std::cout << "Data Size: " << numericFeatures.size() << " elements" << "\n";
-    std::cout << "N Clusters: " << nClusters << "\n";
-    std::cout << "Total Time (ms): " << sum << "\n";
-    std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
-    std::cout << "StDev (ms): +/- " << stDev << "\n";
-
-
-
+  double stDev = getStDev(samples);
+  std::cout << "Data Size: " << numericFeatures.size() << " elements" << "\n";
+  std::cout << "N Clusters: " << nClusters << "\n";
+  std::cout << "Total Time (ms): " << sum << "\n";
+  std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
+  std::cout << "StDev (ms): +/- " << stDev << "\n";
 }
