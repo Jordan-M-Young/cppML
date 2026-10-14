@@ -220,6 +220,30 @@ std::vector<std::vector<double>> loadNumericFeatures(std::vector<std::vector<std
 
 }
 
+double getStDev(std::vector<double> samples){
+  double stDev;
+  double sum{0.0};
+  double sqsum{0.0};
+  double avg;
+  size_t nsamples = samples.size();
+
+  for (int idx{0}; idx < samples.size(); idx++){
+    sum += samples[idx];
+  }
+  avg = sum / samples.size();
+
+
+  for (int idx{0}; idx < nsamples; idx++){
+    samples[idx] =  std::pow(samples[idx] - avg,2);
+  }
+
+  for (int idx{0}; idx < nsamples; idx++){
+    sqsum += samples[idx];
+  }
+
+  return sqsum / nsamples;
+}
+
 int main() {
 //    std::vector<std::vector<double>>points = {{1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}, {7.0, 8.0}};
 
@@ -233,7 +257,7 @@ int main() {
 
   int iterations = 1000;
   double sum{0};
-
+  std::vector<double> samples;
   for (int idx{0}; idx < iterations; idx++){
     auto start = std::chrono::steady_clock::now();
     ClusterResult res = kMeans(numericFeatures, nClusters);
@@ -243,14 +267,20 @@ int main() {
     std::vector<std::vector<std::vector<double>>> clusters = res.clusters;
   
     // std::cout << "Total Time (ns): " << dur.count() << "\n";
-    sum += dur.count();
+    double duration = dur.count();
+    sum += duration;
+    samples.push_back(duration);
 
 
   }
+
+
+    double stDev = getStDev(samples);
     std::cout << "Data Size: " << numericFeatures.size() << " elements" << "\n";
     std::cout << "N Clusters: " << nClusters << "\n";
     std::cout << "Total Time (ms): " << sum << "\n";
     std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
+    std::cout << "StDev (ms): +/- " << stDev << "\n";
 
 
 
