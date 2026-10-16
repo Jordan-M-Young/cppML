@@ -9,6 +9,21 @@ struct Matrix {
     size_t cols;
 };
 
+
+Matrix scalarDivide(Matrix mat, double scalar){
+    std::vector<std::vector<double>> dividedData; 
+
+    for (int rowIdx{0}; rowIdx < mat.rows;rowIdx++){
+        std::vector<double> dividedRow;
+        for (int colIdx{0}; colIdx < mat.cols; colIdx++){
+            dividedRow.push_back(mat.data[rowIdx][colIdx]/scalar);
+        }
+        dividedData.push_back(dividedRow);
+    }
+    return Matrix{dividedData, mat.rows, mat.cols};
+}
+
+
 Matrix transpose(Matrix mat) {
     std::vector<std::vector<double>> new_data;
 
@@ -69,7 +84,6 @@ int rem_euclid(int a, int b) {
     return r;
 }
 
-// Fixed: vec is now passed by reference to correctly update states globally across loops
 void heapPermutations(std::vector<int>& vec, int size, std::vector<std::vector<int>>& heapPerms) {
     if (size == 1) {
         heapPerms.push_back(vec);
@@ -144,49 +158,161 @@ double getDeterminant(Matrix mat) {
     return determinant;
 }
 
-// Matrix cramerInverse(Matrix mat){
 
-//     // step 1. get matrix determinant
-//     double determinant = getDeterminant(mat);
-//     // step 2. get adjugate matrix
+Matrix getMinor(int rowPosition, int colPosition, Matrix mat){
+    std::vector<std::vector<double>> minorData;
 
-//     // step3. divide adjugate matrix by determinant
+    for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++){
+        if (rowIdx == rowPosition){
+            continue;
+        }
+        std::vector<double> minorRow;
 
-//     // step 4. return result
+        for (int colIdx{0}; colIdx < mat.cols; colIdx++){
+            if (colIdx == colPosition){
+                continue;
+            }
+            minorRow.push_back(mat.data[rowIdx][colIdx]);
+        }
+        minorData.push_back(minorRow);
+    }
+
+    return Matrix{minorData, minorData.size(), minorData[0].size()};
+
+}
 
 
-// }
+Matrix getCofactorMatrix(Matrix mat){
+
+    std::vector<std::vector<double>> cofactorData;
+    int rowCount{0};
+
+    for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++){
+        std::vector<double> cofactorRow;
+        int colCount{0};
+
+        for (int colIdx{0}; colIdx < mat.cols; colIdx++){
+            Matrix minor = getMinor(rowIdx, colIdx, mat);
+            double minorDet = getDeterminant(minor);
+
+            int exp = rowCount + colCount + 2;
+            int sign = pow(-1,exp);
+            double cofactor = sign * minorDet;
+            cofactorRow.push_back(cofactor);
+            colCount += 1;
+        }
+        cofactorData.push_back(cofactorRow);
+        rowCount +=1;
+    }
+
+    return Matrix{cofactorData, cofactorData.size(), cofactorData[0].size()};
+
+}
+
+Matrix getAdjugateMatrix(Matrix mat){
+
+    Matrix cofactorMat = getCofactorMatrix(mat);
+    Matrix transCofactorMat = transpose(cofactorMat);
+
+    return transCofactorMat;
+}
 
 
+
+Matrix cramerInverse(Matrix mat){
+
+
+
+    // step 1. get matrix determinant
+    double determinant = getDeterminant(mat);
+    // step 2. get adjugate matrix
+    Matrix adjugate = getAdjugateMatrix(mat);
+    // step3. divide adjugate matrix by determinant
+
+    Matrix divAdjugate = scalarDivide(adjugate, determinant);
+    // step 4. return resuult
+
+    return divAdjugate;
+}
+
+
+Matrix linearRegression(Matrix features, Matrix targets){
+        // XT
+      Matrix tmat = transpose(features);
+  
+      // XTX
+      auto prod = multiplyMatrices(tmat, features);
+
+      Matrix left = cramerInverse(prod.value());
+  
+      auto right = multiplyMatrices(tmat, targets);
+  
+      auto betas = multiplyMatrices(left, right.value());
+
+      return betas.value();
+}
+
+double getStDev(std::vector<double> samples) {
+    double stDev;
+    double sum{0.0};
+    double sqsum{0.0};
+    double avg;
+    size_t nsamples = samples.size();
+  
+    for (int idx{0}; idx < samples.size(); idx++) {
+      sum += samples[idx];
+    }
+    avg = sum / samples.size();
+  
+    for (int idx{0}; idx < nsamples; idx++) {
+      samples[idx] = std::pow(samples[idx] - avg, 2);
+    }
+  
+    for (int idx{0}; idx < nsamples; idx++) {
+      sqsum += samples[idx];
+    }
+  
+    return sqsum / nsamples;
+  }
 
 int main(){
 
     // b=(XTX)−1XTy
-    std::vector<std::vector<double>> data = {{1.0,2.0,3.0},{4.0,5.0,6.0},{7.0,8.0,9.0}};
-    Matrix mat = Matrix{data, data.size(), data[0].size()};
+    std::vector<std::vector<double>> data = {{1.0,2.0,3.0},{4.0,5.0,7.0},{7.0,8.0,10.0}};
+    Matrix features = Matrix{data, data.size(), data[0].size()};
 
-    // X
-    std::cout << "Standard" << "\n";
-    printMatrixData(mat);
-
-    // XT
-    std::cout << "Transpose" << "\n";
-    Matrix tmat = transpose(mat);
-    printMatrixData(tmat);
-
-    // XTX
-    auto prod = multiplyMatrices(mat, tmat);
-    std::cout << "Multiplied" << "\n";
-    printMatrixData(prod.value());
-
-
-    double determinant = getDeterminant(mat);
-    std::cout << "Mat Determinant: " << determinant << "\n";
+    std::vector<std::vector<double>> targData = {{6.1},{16.3},{24.5}};
+    Matrix targs = Matrix{targData, targData.size(), targData[0].size()};
 
 
 
-    std::cout << "Linear Regression" << "\n";
-    std::cout << "-----------------" << "\n";
+
+    std::cout << "Linear Regression" << '\n';
+    std::cout << "--------------" << "\n";
+  
+    int iterations = 1000;
+    double sum{0};
+    std::vector<double> samples;
+  
+    for (int idx{0}; idx < iterations; idx++) {
+      auto start = std::chrono::steady_clock::now();
+      Matrix betas = linearRegression(features, targs);
+      auto end = std::chrono::steady_clock::now();
+      std::chrono::duration<double, std::milli> dur = end - start;
+  
+      // std::cout << "Total Time (ns): " << dur.count() << "\n";
+      double duration = dur.count();
+      sum += duration;
+      samples.push_back(duration);
+    }
+  
+    double stDev = getStDev(samples);
+    std::cout << "N Samples: " << data.size() << " elements" << "\n";
+    std::cout << "N Features: " << targData.size() << "\n";
+    std::cout << "Total Time (ms): " << sum << "\n";
+    std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
+    std::cout << "StDev (ms): +/- " << stDev << "\n";
+  }
 
 
-}
+
