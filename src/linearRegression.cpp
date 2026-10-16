@@ -2,6 +2,7 @@
 #include <ctime>
 #include <vector>
 #include <optional>
+#include "utils.h"
 
 struct Matrix {
     std::vector<std::vector<double>> data;
@@ -275,7 +276,31 @@ double getStDev(std::vector<double> samples) {
     return sqsum / nsamples;
   }
 
+
+
+  void printVecString(std::vector<std::string> &vec) {
+    std::cout << "[";
+    for (int idx{0}; idx < vec.size(); idx++) {
+      std::cout << " " << vec[idx];
+    }
+    std::cout << " ]" << "\n";
+  }
+  
+  void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
+    for (int idx{0}; idx < vecVec.size(); idx++) {
+      printVecString(vecVec[idx]);
+    }
+  }
+
+
+
 int main(){
+    const char* filename =  "./data/mpg.csv";
+    std::vector<std::vector<std::string>> csvData = loadCSV(filename);
+    printVecVecString(csvData);
+
+
+
 
     // b=(XTX)−1XTy
     std::vector<std::vector<double>> data = {{1.0,2.0,3.0},{4.0,5.0,7.0},{7.0,8.0,10.0}};
