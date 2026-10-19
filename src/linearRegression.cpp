@@ -279,37 +279,65 @@ double getStDev(std::vector<double> samples) {
 
 
   void printVecString(std::vector<std::string> &vec) {
-    std::cout << "[";
-    for (int idx{0}; idx < vec.size(); idx++) {
-      std::cout << " " << vec[idx];
+    std::cout << "[ ";
+    for (size_t idx{0}; idx < vec.size(); idx++) {
+        std::string cell = vec[idx];
+        
+        // Clean out any hidden carriage returns causing terminal overwrite
+        if (!cell.empty() && cell.back() == '\r') {
+            cell.pop_back();
+        }
+        
+        std::cout << cell;
+        if (idx < vec.size() - 1) {
+            std::cout << ", ";
+        }
     }
-    std::cout << " ]" << "\n";
-  }
-  
-  void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
-    for (int idx{0}; idx < vecVec.size(); idx++) {
-      printVecString(vecVec[idx]);
+    std::cout << " ]\n";
+}
+
+void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
+    std::cout << "[\n";
+    for (size_t idx{0}; idx < vecVec.size(); idx++) {
+        std::cout << "  "; // Indent rows for readability
+        printVecString(vecVec[idx]);
     }
-  }
+}
 
 
+Matrix getTargets(std::vector<std::vector<std::string>> &csvData){
+    std::vector<std::vector<double>> targets;
+
+    for (int idx{1}; idx < csvData.size(); idx++){
+        std::vector<double> targetRow;
+        targetRow.push_back(std::stod(csvData[idx][0]));
+        targets.push_back(targetRow);
+    }
+
+    return Matrix{targets, targets.size(), targets[0].size()};
+}
+
+Matrix getFeatures(std::vector<std::vector<std::string>> &csvData){
+    std::vector<std::vector<double>> features;
+
+    for (int idx{1}; idx < csvData.size(); idx++){
+        std::vector<double> featureRow;
+        for (int jdx{1}; jdx < 8; jdx++){
+            featureRow.push_back(std::stod(csvData[idx][jdx]));
+
+        }
+        features.push_back(featureRow);
+    }
+
+    return Matrix{features, features.size(), features[0].size()};
+}
 
 int main(){
     const char* filename =  "./data/mpg.csv";
     std::vector<std::vector<std::string>> csvData = loadCSV(filename);
-    printVecVecString(csvData);
 
-
-
-
-    // b=(XTX)−1XTy
-    std::vector<std::vector<double>> data = {{1.0,2.0,3.0},{4.0,5.0,7.0},{7.0,8.0,10.0}};
-    Matrix features = Matrix{data, data.size(), data[0].size()};
-
-    std::vector<std::vector<double>> targData = {{6.1},{16.3},{24.5}};
-    Matrix targs = Matrix{targData, targData.size(), targData[0].size()};
-
-
+    Matrix targets = getTargets(csvData);
+    Matrix features = getFeatures(csvData);
 
 
     std::cout << "Linear Regression" << '\n';
@@ -321,7 +349,8 @@ int main(){
   
     for (int idx{0}; idx < iterations; idx++) {
       auto start = std::chrono::steady_clock::now();
-      Matrix betas = linearRegression(features, targs);
+      Matrix betas = linearRegression(features, targets);
+    //   printMatrixData(betas);
       auto end = std::chrono::steady_clock::now();
       std::chrono::duration<double, std::milli> dur = end - start;
   
@@ -332,8 +361,8 @@ int main(){
     }
   
     double stDev = getStDev(samples);
-    std::cout << "N Samples: " << data.size() << " elements" << "\n";
-    std::cout << "N Features: " << targData.size() << "\n";
+    std::cout << "N Samples: " << targets.data.size() << " elements" << "\n";
+    std::cout << "N Features: " << targets.data.size() << "\n";
     std::cout << "Total Time (ms): " << sum << "\n";
     std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
     std::cout << "StDev (ms): +/- " << stDev << "\n";
