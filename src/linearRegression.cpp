@@ -11,7 +11,7 @@ struct Matrix {
 };
 
 
-Matrix scalarDivide(Matrix mat, double scalar){
+Matrix scalarDivide(Matrix &mat, double scalar){
     std::vector<std::vector<double>> dividedData; 
 
     for (int rowIdx{0}; rowIdx < mat.rows;rowIdx++){
@@ -25,7 +25,7 @@ Matrix scalarDivide(Matrix mat, double scalar){
 }
 
 
-Matrix transpose(Matrix mat) {
+Matrix transpose(Matrix& mat) {
     std::vector<std::vector<double>> new_data;
 
     for (size_t colIdx{0}; colIdx < mat.cols; colIdx++) {
@@ -39,7 +39,7 @@ Matrix transpose(Matrix mat) {
     return Matrix{new_data, mat.cols, mat.rows};
 }
 
-void printMatrixData(Matrix mat) {
+void printMatrixData(Matrix& mat) {
     std::cout << "[ " << "\n";
     for (size_t rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
         std::cout << "[ ";
@@ -51,7 +51,7 @@ void printMatrixData(Matrix mat) {
     std::cout << "]" << "\n";
 }
 
-double dotProduct(std::vector<double> vecA, std::vector<double> vecB) {
+double dotProduct(std::vector<double>& vecA, std::vector<double>& vecB) {
     double dotProd{0.0};
     for (size_t rowIdx{0}; rowIdx < vecA.size(); rowIdx++) { // Fixed initialization
         dotProd += (vecA[rowIdx] * vecB[rowIdx]);
@@ -59,7 +59,7 @@ double dotProduct(std::vector<double> vecA, std::vector<double> vecB) {
     return dotProd;
 }
 
-std::optional<Matrix> multiplyMatrices(Matrix matA, Matrix matB) {
+std::optional<Matrix> multiplyMatrices(Matrix& matA, Matrix& matB) {
     if (matA.cols != matB.rows) {
         return std::nullopt;
     }
@@ -77,7 +77,7 @@ std::optional<Matrix> multiplyMatrices(Matrix matA, Matrix matB) {
     return Matrix{multData, matA.rows, matB.cols};
 }
 
-int rem_euclid(int a, int b) {
+int rem_euclid(int& a, int b) {
     int r = a % b;
     if (r < 0) {
         r += (b < 0 ? -b : b);
@@ -112,7 +112,7 @@ std::vector<std::vector<int>> getPerms(int size) {
     return permutations;
 }
 
-int modifiedBubbleSort(std::vector<int> perm) {
+int modifiedBubbleSort(std::vector<int>& perm) {
     int operations{0};
 
     for (size_t pIdx{0}; pIdx < perm.size(); pIdx++) {
@@ -133,7 +133,7 @@ int modifiedBubbleSort(std::vector<int> perm) {
     return operations;
 }
 
-int get_permutation_sign(std::vector<int> perm) {
+int get_permutation_sign(std::vector<int>& perm) {
     int operations = modifiedBubbleSort(perm);
     if (rem_euclid(operations, 2) == 0) { // Fixed: checking for 0 instead of 2
         return 1;
@@ -142,7 +142,7 @@ int get_permutation_sign(std::vector<int> perm) {
     }
 }
 
-double getDeterminant(Matrix mat) {
+double getDeterminant(Matrix& mat) {
     double determinant{0.0};
     std::vector<std::vector<int>> perms = getPerms(mat.rows);
 
@@ -160,7 +160,7 @@ double getDeterminant(Matrix mat) {
 }
 
 
-Matrix getMinor(int rowPosition, int colPosition, Matrix mat){
+Matrix getMinor(int rowPosition, int colPosition, Matrix& mat){
     std::vector<std::vector<double>> minorData;
 
     for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++){
@@ -183,7 +183,7 @@ Matrix getMinor(int rowPosition, int colPosition, Matrix mat){
 }
 
 
-Matrix getCofactorMatrix(Matrix mat){
+Matrix getCofactorMatrix(Matrix& mat){
 
     std::vector<std::vector<double>> cofactorData;
     int rowCount{0};
@@ -210,7 +210,7 @@ Matrix getCofactorMatrix(Matrix mat){
 
 }
 
-Matrix getAdjugateMatrix(Matrix mat){
+Matrix getAdjugateMatrix(Matrix& mat){
 
     Matrix cofactorMat = getCofactorMatrix(mat);
     Matrix transCofactorMat = transpose(cofactorMat);
@@ -220,7 +220,7 @@ Matrix getAdjugateMatrix(Matrix mat){
 
 
 
-Matrix cramerInverse(Matrix mat){
+Matrix cramerInverse(Matrix& mat){
 
 
 
@@ -237,7 +237,7 @@ Matrix cramerInverse(Matrix mat){
 }
 
 
-Matrix linearRegression(Matrix features, Matrix targets){
+Matrix linearRegression(Matrix& features, Matrix& targets){
         // XT
       Matrix tmat = transpose(features);
   
@@ -253,7 +253,7 @@ Matrix linearRegression(Matrix features, Matrix targets){
       return betas.value();
 }
 
-double getStDev(std::vector<double> samples) {
+double getStDev(std::vector<double>& samples) {
     double stDev;
     double sum{0.0};
     double sqsum{0.0};

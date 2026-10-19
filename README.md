@@ -19,4 +19,5 @@ Machine Learning Models Implemented in C++
 
 | Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-| vanilla-LR | MPG (n=393) | 7 | 1000 | 39086.4  | 2.83349 | 39.0864 | No optimizations; uses cramer-inverse for inverting matrices |
+| vanilla-LR | MPG (n=393) | 7 | 1000 | 39086.4  | 39.0864 | 39.0864 | No optimizations; uses cramer-inverse for inverting matrices |
+| reference-args | MPG (n=393) | 7 | 1000 | 23294.3  | 23.2943 | 0.813787 | No optimizations; uses cramer-inverse for inverting matrices |
