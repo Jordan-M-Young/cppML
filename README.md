@@ -17,5 +17,6 @@ Machine Learning Models Implemented in C++
 
 ## Linear Regression
 
-| Implementation | Dataset | N Clusters | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
+| Implementation | Dataset | N Featyres | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| vanilla-LR | MPG (n=393) | 7 | 1000 | 39086.4  | 2.83349 | 39.0864 | No optimizations; uses cramer-inverse for inverting matrices |
