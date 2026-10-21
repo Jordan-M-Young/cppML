@@ -25,28 +25,16 @@ struct Matrix {
 std::vector<double> vectorSub(std::vector<double>& vec_a,
                               std::vector<double>& vec_b) {
   std::vector<double> newVec;
+  newVec.reserve(vec_a.size());
   for (int rowIdx{0}; rowIdx < vec_a.size(); rowIdx++) {
     newVec.push_back(vec_a[rowIdx] - vec_b[rowIdx]);
   }
   return newVec;
 }
 
-std::vector<std::vector<double>> applyMatrixSigmoid(Matrix &mat) {
-  std::vector<std::vector<double>> sigmoidData;
-  for (int idx{0}; idx < mat.rows; idx++) {
-    std::vector<double> rowData;
-    for (int jdx{0}; jdx < mat.cols; jdx++) {
-      double sigValue = sigmoid(mat.data[idx][jdx]);
-      rowData.push_back(sigValue);
-    }
-    sigmoidData.push_back(rowData);
-  }
-
-  return sigmoidData;
-}
-
 std::vector<double> applyVectorSigmoid(std::vector<double>& vec) {
   std::vector<double> sigmoidData;
+  sigmoidData.reserve(vec.size());
   for (int idx{0}; idx < vec.size(); idx++) {
     sigmoidData.push_back(sigmoid(vec[idx]));
   }
@@ -55,7 +43,7 @@ std::vector<double> applyVectorSigmoid(std::vector<double>& vec) {
 
 std::vector<double> matrixVecDot(Matrix& mat, std::vector<double>& vec) {
   std::vector<double> dotVec;
-
+  dotVec.reserve(mat.rows);
   for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
     double sm = 0.0;
     for (int colIdx{0}; colIdx < mat.cols; colIdx++) {
@@ -68,8 +56,11 @@ std::vector<double> matrixVecDot(Matrix& mat, std::vector<double>& vec) {
 
 Matrix scalarMatrixAdd(Matrix& mat, double scalar) {
   std::vector<std::vector<double>> newData;
+  newData.reserve(mat.rows);
   for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
     std::vector<double> newRow;
+    newRow.reserve(mat.cols);
+
     for (int colIdx{0}; colIdx < mat.cols; colIdx++) {
       newRow.push_back(mat.data[rowIdx][colIdx] + scalar);
     }
@@ -80,6 +71,7 @@ Matrix scalarMatrixAdd(Matrix& mat, double scalar) {
 
 std::vector<double> scalarVectorAdd(std::vector<double>& vec, double scalar) {
   std::vector<double> newData;
+  newData.reserve(vec.size());
   for (int rowIdx{0}; rowIdx < vec.size(); rowIdx++) {
     newData.push_back(vec[rowIdx] + scalar);
   }
@@ -88,6 +80,7 @@ std::vector<double> scalarVectorAdd(std::vector<double>& vec, double scalar) {
 
 std::vector<double> ScalarVectorMult(std::vector<double>& vec, double scalar) {
   std::vector<double> newData;
+  newData.reserve(vec.size());
   for (int rowIdx{0}; rowIdx < vec.size(); rowIdx++) {
     newData.push_back(vec[rowIdx] * scalar);
   }
@@ -96,10 +89,12 @@ std::vector<double> ScalarVectorMult(std::vector<double>& vec, double scalar) {
 
 Matrix transpose(Matrix &mat) {
   std::vector<std::vector<double>> new_data;
+  new_data.reserve(mat.cols);
 
   for (size_t colIdx{0}; colIdx < mat.cols; colIdx++) {
     std::vector<double> transRow;
-    for (size_t rowIdx{0}; rowIdx < mat.rows; rowIdx++) { // Fixed boundary
+    transRow.reserve(mat.rows);
+    for (size_t rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
       transRow.push_back(mat.data[rowIdx][colIdx]);
     }
     new_data.push_back(transRow);
