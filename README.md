@@ -33,3 +33,4 @@ Machine Learning Models Implemented in C++
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | logistic-regression | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 136864  | 136.864 | 12.1644 | No optimizations |
 | ref-args | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 69424.4  | 69.4244 | 5.76012 | Reference Args |
+| logreg-reserve | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 43001.7  | 43.0017 | 0.814364 | Reference Args |
