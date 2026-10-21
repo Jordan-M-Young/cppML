@@ -32,3 +32,4 @@ Machine Learning Models Implemented in C++
 | Implementation | Dataset | N Features | LRate | GD Iterations  |Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | logistic-regression | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 136864  | 136.864 | 12.1644 | No optimizations |
+| ref-args | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 69424.4  | 69.4244 | 5.76012 | Reference Args |

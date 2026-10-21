@@ -8,7 +8,7 @@ double sigmoid(double z) {
   return 1.0 / (1 + pow(e, -z));
 }
 
-double vectorSum(std::vector<double> vec) {
+double vectorSum(std::vector<double>& vec) {
   double sum{0.0};
   for (int idx{0}; idx < vec.size(); idx++) {
     sum += vec[idx];
@@ -22,8 +22,8 @@ struct Matrix {
   size_t cols;
 };
 
-std::vector<double> vectorSub(std::vector<double> vec_a,
-                              std::vector<double> vec_b) {
+std::vector<double> vectorSub(std::vector<double>& vec_a,
+                              std::vector<double>& vec_b) {
   std::vector<double> newVec;
   for (int rowIdx{0}; rowIdx < vec_a.size(); rowIdx++) {
     newVec.push_back(vec_a[rowIdx] - vec_b[rowIdx]);
@@ -45,7 +45,7 @@ std::vector<std::vector<double>> applyMatrixSigmoid(Matrix &mat) {
   return sigmoidData;
 }
 
-std::vector<double> applyVectorSigmoid(std::vector<double> vec) {
+std::vector<double> applyVectorSigmoid(std::vector<double>& vec) {
   std::vector<double> sigmoidData;
   for (int idx{0}; idx < vec.size(); idx++) {
     sigmoidData.push_back(sigmoid(vec[idx]));
@@ -53,7 +53,7 @@ std::vector<double> applyVectorSigmoid(std::vector<double> vec) {
   return sigmoidData;
 }
 
-std::vector<double> matrixVecDot(Matrix mat, std::vector<double> vec) {
+std::vector<double> matrixVecDot(Matrix& mat, std::vector<double>& vec) {
   std::vector<double> dotVec;
 
   for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
@@ -66,7 +66,7 @@ std::vector<double> matrixVecDot(Matrix mat, std::vector<double> vec) {
   return dotVec;
 }
 
-Matrix scalarMatrixAdd(Matrix mat, double scalar) {
+Matrix scalarMatrixAdd(Matrix& mat, double scalar) {
   std::vector<std::vector<double>> newData;
   for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++) {
     std::vector<double> newRow;
@@ -78,7 +78,7 @@ Matrix scalarMatrixAdd(Matrix mat, double scalar) {
   return Matrix{newData, mat.rows, mat.cols};
 }
 
-std::vector<double> scalarVectorAdd(std::vector<double> vec, double scalar) {
+std::vector<double> scalarVectorAdd(std::vector<double>& vec, double scalar) {
   std::vector<double> newData;
   for (int rowIdx{0}; rowIdx < vec.size(); rowIdx++) {
     newData.push_back(vec[rowIdx] + scalar);
@@ -86,7 +86,7 @@ std::vector<double> scalarVectorAdd(std::vector<double> vec, double scalar) {
   return newData;
 }
 
-std::vector<double> ScalaraVectorMult(std::vector<double> vec, double scalar) {
+std::vector<double> ScalarVectorMult(std::vector<double>& vec, double scalar) {
   std::vector<double> newData;
   for (int rowIdx{0}; rowIdx < vec.size(); rowIdx++) {
     newData.push_back(vec[rowIdx] * scalar);
@@ -116,7 +116,7 @@ public:
   std::vector<double> weights;
   std::vector<double> losses;
 
-  void fit(Matrix features, std::vector<double> targets) {
+  void fit(Matrix& features, std::vector<double>& targets) {
 
     double gradientScaleFactor = 1.0 / features.rows;
 
@@ -129,24 +129,27 @@ public:
     }
 
     for (int iteration{0}; iteration < iterations; iteration++) {
-
+        std::vector<double> featWeightProd = matrixVecDot(features, weights);
       std::vector<double> z =
-          scalarVectorAdd(matrixVecDot(features, weights), bias);
+          scalarVectorAdd(featWeightProd, bias);
 
       std::vector<double> predictions = applyVectorSigmoid(z);
       std::vector<double> predTargDiff = vectorSub(predictions, targets);
       Matrix featuresT = transpose(features);
-      std::vector<double> dw = ScalaraVectorMult(
-          matrixVecDot(featuresT, predTargDiff), gradientScaleFactor);
-      double db = gradientScaleFactor * vectorSum(predTargDiff);
 
-      weights = vectorSub(weights, ScalaraVectorMult(dw, learningRate));
+      std::vector<double> featTargProd = matrixVecDot(featuresT, predTargDiff);
+      std::vector<double> dw = ScalarVectorMult(
+          featTargProd, gradientScaleFactor);
+      double db = gradientScaleFactor * vectorSum(predTargDiff);
+      std::vector<double> scaledDW = ScalarVectorMult(dw, learningRate);
+      weights = vectorSub(weights, scaledDW);
       bias -= (db * learningRate);
     }
   }
   std::vector<double> predict_proba(Matrix features) {
-    return applyVectorSigmoid(
-        scalarVectorAdd(matrixVecDot(features, weights), bias));
+    std::vector<double> featWeightProd = matrixVecDot(features, weights);
+    std::vector<double> featWeightProdPlusBias = scalarVectorAdd(featWeightProd, bias);
+    return applyVectorSigmoid(featWeightProdPlusBias);
   }
 };
 void printVec(std::vector<double> vec) {
@@ -195,6 +198,8 @@ int main() {
   int iterations = 1000;
   double sum{0};
   std::vector<double> samples;
+  std::cout << "Logistic Regression:" << "\n";
+  std::cout << "-------------------------" << "\n";
   for (int idx{0}; idx < iterations; idx++) {
     auto start = std::chrono::steady_clock::now();
     LogisticRegression l{lr, logreg_iterations, 0.0};
