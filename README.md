@@ -4,7 +4,9 @@ Machine Learning Models Implemented in C++
 
 # Models 
 
-## Kmeans
+## Clustering
+
+### Kmeans
 
 | Implementation | Dataset | N Clusters | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
@@ -13,11 +15,20 @@ Machine Learning Models Implemented in C++
 | preallocate-vector | Iris (n=150) | 3 | 1000 | 960.514  | 0.960514 | 0.138862 | Reserve vector sizes  |
 | try-stack-allocation | Iris (n=150) | 3 | 1000 | 382.588  | 0.382588 | 0.0168277 | swap vectors for presized arrays via templates; user unfriendly  |
 
+## Regression
 
-
-## Linear Regression
+### Linear Regression
 
 | Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | vanilla-LR | MPG (n=393) | 7 | 1000 | 39086.4  | 39.0864 | 0.416398 | No optimizations; uses cramer-inverse for inverting matrices |
-| reference-args | MPG (n=393) | 7 | 1000 | 23294.3  | 23.2943 | 0.813787 | No optimizations; uses cramer-inverse for inverting matrices |
+| reference-args | MPG (n=393) | 7 | 1000 | 23294.3  | 23.2943 | 0.813787 |Functions accept vector refs now |
+
+
+## Classification
+
+### Logistic Regression
+
+| Implementation | Dataset | N Features | LRate | GD Iterations  |Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  |
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| logistic-regression | wikipedia(n=20) | 1 | 0.001 | 10000 | 1000 | 136864  | 136.864 | 12.1644 | No optimizations |
