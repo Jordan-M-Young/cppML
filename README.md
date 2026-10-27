@@ -43,4 +43,4 @@ Machine Learning Models Implemented in C++
 | Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  | Compiler/Opt |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | decTree | Iris (n=150) | 4 | 1000 | 7674.14  | 7.67414 | 1.11896 | No optimizations | g++ -O0 |
-| decTree | Iris (n=150) | 4 | 1000 | 4527.37  | 4.52737 | 0.0581833 | No optimizations | g++ -O0 |
+| decTree Refs | Iris (n=150) | 4 | 1000 | 4527.37  | 4.52737 | 0.0581833 | Ref args | g++ -O0 |
