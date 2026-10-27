@@ -40,5 +40,6 @@ Machine Learning Models Implemented in C++
 
 ### Decision Tree Classifier
 
-| Implementation | Dataset | N Features | LRate | GD Iterations  |Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  | Compiler/Opt |
-| -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  | Compiler/Opt |
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+| decTree | Iris (n=150) | 4 | 1000 | 7674.14  | 7.67414 | 1.11896 | No optimizations | g++ -O0 |
