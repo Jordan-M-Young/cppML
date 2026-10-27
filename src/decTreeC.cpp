@@ -17,7 +17,7 @@ void printVec(std::vector<T> vec) {
   std::cout << "]" << "\n";
 }
 
-std::vector<double> scalarDivide(std::vector<double> vec, double scalar){
+std::vector<double> scalarDivide(std::vector<double>& vec, double scalar){
     std::vector<double> newVec;
     for (int idx{0}; idx < vec.size(); idx++){
         newVec.push_back(vec[idx]/scalar);
@@ -36,7 +36,7 @@ struct Matrix {
 
 
 template <typename T>
-std::vector<T> getUnique(std::vector<T> vec){
+std::vector<T> getUnique(std::vector<T>& vec){
     std::unordered_set<T> valSet;
     std::vector<T> uniqueVals;
 
@@ -69,7 +69,7 @@ public:
 
 
 template <typename T>
-std::vector<double> binCount(std::vector<T> vec){
+std::vector<double> binCount(std::vector<T>& vec){
     auto maxIterator = std::max_element(vec.begin(),vec.end());
     int maxElement = *maxIterator;
 
@@ -82,7 +82,7 @@ std::vector<double> binCount(std::vector<T> vec){
 }
 
 
-std::vector<double> applyPLog2(std::vector<double> vec){
+std::vector<double> applyPLog2(std::vector<double>& vec){
     std::vector<double> newVec;
     for (int idx{0};idx < vec.size(); idx++){
         if (vec[idx] > 0.0){
@@ -92,7 +92,7 @@ std::vector<double> applyPLog2(std::vector<double> vec){
     return newVec;
 }
 
-double vectorSum(std::vector<double> vec) {
+double vectorSum(std::vector<double>& vec) {
     double sum{0.0};
     for (int idx{0}; idx < vec.size(); idx++) {
       sum += vec[idx];
@@ -101,7 +101,7 @@ double vectorSum(std::vector<double> vec) {
   }
 
 
-  std::vector<double> getMatrixCol(Matrix mat, int colIdx){
+  std::vector<double> getMatrixCol(Matrix& mat, int colIdx){
     std::vector<double> colData;
     for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++){
         colData.push_back(mat.data[rowIdx][colIdx]);
@@ -109,7 +109,7 @@ double vectorSum(std::vector<double> vec) {
     return colData;
   }
 
-Matrix sampleMatrixRows(Matrix mat, std::vector<int> rowIndices){
+Matrix sampleMatrixRows(Matrix& mat, std::vector<int>& rowIndices){
     std::vector<std::vector<double>> newData;
     for (int idx : rowIndices){
         newData.push_back(mat.data[idx]);
@@ -123,7 +123,7 @@ struct IndexSplitResult{
 };
 
 
-IndexSplitResult splitOnThreshold(std::vector<double> vec, double threshold){
+IndexSplitResult splitOnThreshold(std::vector<double>& vec, double threshold){
     std::vector<int> left;
     std::vector<int> right;
 
@@ -139,7 +139,7 @@ IndexSplitResult splitOnThreshold(std::vector<double> vec, double threshold){
 }
 
 
-std::vector<int> selectValuesByIndices(std::vector<int> vec, std::vector<int> indices){
+std::vector<int> selectValuesByIndices(std::vector<int>& vec, std::vector<int>& indices){
     std::vector<int> subVec;
     for (int idx : indices){
         subVec.push_back(vec[idx]);
@@ -148,14 +148,14 @@ std::vector<int> selectValuesByIndices(std::vector<int> vec, std::vector<int> in
 }
 
 template <typename T>
-int argMax(std::vector<T> vec){
+int argMax(std::vector<T>& vec){
     auto maxIt = std::max_element(vec.begin(),vec.end());
     return std::distance(vec.begin(),maxIt);
 
 }
 
 
-std::vector<int> encodeTargets(std::vector<std::string> targets){
+std::vector<int> encodeTargets(std::vector<std::string>& targets){
     std::unordered_map<std::string, int> mp;
     std::vector<int> encodedTargets;
     int count{0};
@@ -170,7 +170,7 @@ std::vector<int> encodeTargets(std::vector<std::string> targets){
     return encodedTargets;
 }
 
-std::vector<std::string> getTargetColumn(std::vector<std::vector<std::string>> data){
+std::vector<std::string> getTargetColumn(std::vector<std::vector<std::string>>& data){
     std::vector<std::string> targets;
     for (std::vector<std::string> row : data){
         if (row[5] == "Species"){
@@ -196,7 +196,7 @@ public:
     DecisionTree(int minSamplesSplit, int maxDepth) : minSamplesSplit(minSamplesSplit), maxDepth(maxDepth), root(nullptr)  {}
 
 
-    SplitResult findBestSplit(Matrix features, std::vector<int> targets){
+    SplitResult findBestSplit(Matrix& features, std::vector<int>& targets){
         double bestGain = -1.0;
         int splitIdx = -1;
         double splitThreshold = 0.0;
@@ -249,7 +249,7 @@ public:
     }
 
 
-    Node* growTree(Matrix features, std::vector<int> targets, int depth){
+    Node* growTree(Matrix& features, std::vector<int>& targets, int depth){
         int nSamples = features.rows;
         int nFeatures = features.cols;
         int nLabels = getUnique(targets).size();
@@ -300,18 +300,19 @@ public:
         node->right = right;
         return node;
     }
-    double entropy(std::vector<int> vec){
+    double entropy(std::vector<int>& vec){
         std::vector<double> binCounter = binCount(vec);
         std::vector<double> scaledBinCounter = scalarDivide(binCounter, vec.size());
-        double entropy = -1.0 * vectorSum(applyPLog2(scaledBinCounter));
+        std::vector<double> logvals = applyPLog2(scaledBinCounter);
+        double entropy = -1.0 * vectorSum(logvals);
         return entropy;
     }
 
-    void fit(Matrix features, std::vector<int> targets){
+    void fit(Matrix& features, std::vector<int>& targets){
         root = growTree(features, targets, 0);
     }
 
-    int traverseTree(std::vector<double> x, Node* node){
+    int traverseTree(std::vector<double>& x, Node* node){
         if (node->isLeafNode()){
             return node->value;
         }
@@ -323,7 +324,7 @@ public:
         return traverseTree(x, node->right);
     }
 
-    std::vector<int> predict(Matrix features){
+    std::vector<int> predict(Matrix& features){
         std::vector<int> preds;
         for (auto row : features.data){
             int pred = traverseTree(row, root);
