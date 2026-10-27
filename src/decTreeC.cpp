@@ -8,17 +8,11 @@
 #include <unordered_map>
 #include "utils.h"
 
-template <typename T>
-void printVec(std::vector<T> vec) {
-  std::cout << "[ ";
-  for (int i{0}; i < vec.size(); i++) {
-    std::cout << vec[i] << " ";
-  }
-  std::cout << "]" << "\n";
-}
 
 std::vector<double> scalarDivide(std::vector<double>& vec, double scalar){
     std::vector<double> newVec;
+    newVec.reserve(vec.size());
+
     for (int idx{0}; idx < vec.size(); idx++){
         newVec.push_back(vec[idx]/scalar);
     }
@@ -39,6 +33,7 @@ template <typename T>
 std::vector<T> getUnique(std::vector<T>& vec){
     std::unordered_set<T> valSet;
     std::vector<T> uniqueVals;
+    uniqueVals.reserve(vec.size());
 
     for (int idx{0}; idx < vec.size(); idx++){
         if (valSet.contains(vec[idx])){
@@ -84,6 +79,7 @@ std::vector<double> binCount(std::vector<T>& vec){
 
 std::vector<double> applyPLog2(std::vector<double>& vec){
     std::vector<double> newVec;
+    newVec.reserve(vec.size());
     for (int idx{0};idx < vec.size(); idx++){
         if (vec[idx] > 0.0){
             newVec.push_back(vec[idx] * std::log2(vec[idx]));
@@ -103,6 +99,7 @@ double vectorSum(std::vector<double>& vec) {
 
   std::vector<double> getMatrixCol(Matrix& mat, int colIdx){
     std::vector<double> colData;
+    colData.reserve(mat.rows);
     for (int rowIdx{0}; rowIdx < mat.rows; rowIdx++){
         colData.push_back(mat.data[rowIdx][colIdx]);
     }
@@ -111,6 +108,7 @@ double vectorSum(std::vector<double>& vec) {
 
 Matrix sampleMatrixRows(Matrix& mat, std::vector<int>& rowIndices){
     std::vector<std::vector<double>> newData;
+    newData.reserve(rowIndices.size());
     for (int idx : rowIndices){
         newData.push_back(mat.data[idx]);
     }
@@ -126,6 +124,8 @@ struct IndexSplitResult{
 IndexSplitResult splitOnThreshold(std::vector<double>& vec, double threshold){
     std::vector<int> left;
     std::vector<int> right;
+    left.reserve(vec.size());
+    right.reserve(vec.size());
 
     for (int idx{0}; idx < vec.size(); idx++){
         if (vec[idx] <= threshold){
@@ -141,6 +141,7 @@ IndexSplitResult splitOnThreshold(std::vector<double>& vec, double threshold){
 
 std::vector<int> selectValuesByIndices(std::vector<int>& vec, std::vector<int>& indices){
     std::vector<int> subVec;
+    subVec.reserve(indices.size());
     for (int idx : indices){
         subVec.push_back(vec[idx]);
     }
@@ -160,6 +161,7 @@ std::vector<int> encodeTargets(std::vector<std::string>& targets){
     std::vector<int> encodedTargets;
     int count{0};
 
+    encodedTargets.reserve(targets.size());
     for (std::string target : targets){
         if (!mp.contains(target)){
             mp[target] = count;
@@ -170,8 +172,10 @@ std::vector<int> encodeTargets(std::vector<std::string>& targets){
     return encodedTargets;
 }
 
+
 std::vector<std::string> getTargetColumn(std::vector<std::vector<std::string>>& data){
     std::vector<std::string> targets;
+    targets.reserve(data.size());
     for (std::vector<std::string> row : data){
         if (row[5] == "Species"){
             continue;
@@ -326,6 +330,7 @@ public:
 
     std::vector<int> predict(Matrix& features){
         std::vector<int> preds;
+        preds.reserve(features.rows);
         for (auto row : features.data){
             int pred = traverseTree(row, root);
             preds.push_back(pred);

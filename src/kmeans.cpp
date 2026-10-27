@@ -8,16 +8,8 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include "utils.h"
 
-
-template <int Cols>
-void printVec(std::array<double,Cols> vec) {
-  std::cout << "[ ";
-  for (int i{0}; i < Cols; i++) {
-    std::cout << vec[i] << " ";
-  }
-  std::cout << "]" << "\n";
-}
 
 template <int Rows, int Cols>
 void printVecVec(std::array<std::array<double,Cols>,Rows> vecVec) {

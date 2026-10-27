@@ -48,3 +48,21 @@ loadNumericFeatures(std::vector<std::vector<std::string>> data) {
 
   return numericFeatures;
 }
+
+
+template <typename T>
+void printVec(std::vector<T> vec) {
+  std::cout << "[ ";
+  for (int i{0}; i < vec.size(); i++) {
+    std::cout << vec[i] << " ";
+  }
+  std::cout << "]" << "\n";
+}
+
+
+template <typename T>
+void printVecVec(std::vector<std::vector<double>> vecVec) {
+  for (int i{0}; i < vecVec.size(); i++) {
+    printVec(vecVec[i]);
+  }
+}
