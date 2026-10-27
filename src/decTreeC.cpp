@@ -5,6 +5,17 @@
 #include <cmath>
 #include <unordered_set>
 #include <cfloat>
+#include <unordered_map>
+#include "utils.h"
+
+template <typename T>
+void printVec(std::vector<T> vec) {
+  std::cout << "[ ";
+  for (int i{0}; i < vec.size(); i++) {
+    std::cout << vec[i] << " ";
+  }
+  std::cout << "]" << "\n";
+}
 
 std::vector<double> scalarDivide(std::vector<double> vec, double scalar){
     std::vector<double> newVec;
@@ -52,10 +63,7 @@ public:
     Node(int val, int f, double t) : left(nullptr), right(nullptr), value(val), feature(f), threshold(t)  {}
 
     bool isLeafNode(){
-        if (value == -1){
-            return true;
-        }
-        return false;
+        return (left == nullptr && right == nullptr);
     }
 };
 
@@ -65,7 +73,7 @@ std::vector<double> binCount(std::vector<T> vec){
     auto maxIterator = std::max_element(vec.begin(),vec.end());
     int maxElement = *maxIterator;
 
-    std::vector<double> binCounter (maxElement,0.0);
+    std::vector<double> binCounter (maxElement+1,0.0);
 
     for (int idx{0}; idx < vec.size(); idx++){
         binCounter[vec[idx]] += 1.0;
@@ -146,6 +154,33 @@ int argMax(std::vector<T> vec){
 
 }
 
+
+std::vector<int> encodeTargets(std::vector<std::string> targets){
+    std::unordered_map<std::string, int> mp;
+    std::vector<int> encodedTargets;
+    int count{0};
+
+    for (std::string target : targets){
+        if (!mp.contains(target)){
+            mp[target] = count;
+            count += 1;
+        }
+        encodedTargets.push_back(mp[target]);
+    }
+    return encodedTargets;
+}
+
+std::vector<std::string> getTargetColumn(std::vector<std::vector<std::string>> data){
+    std::vector<std::string> targets;
+    for (std::vector<std::string> row : data){
+        if (row[5] == "Species"){
+            continue;
+        }
+        targets.push_back(row[5]);
+    }
+    return targets;
+}
+
 struct SplitResult{
     int splitIdx;
     double splitThresh;
@@ -219,9 +254,9 @@ public:
         int nFeatures = features.cols;
         int nLabels = getUnique(targets).size();
 
-        if (targets.empty() || nLabels == 0) {
-            return new Node(-1, -1, -DBL_MAX);
-        }
+        // if (targets.empty() || nLabels == 0) {
+        //     return new Node(-1, -1, -DBL_MAX);
+        // }
 
         if ((depth >= maxDepth) || (nLabels == 1) || (nSamples < minSamplesSplit)){
             auto binCounter = binCount(targets);
@@ -312,13 +347,67 @@ private:
     }
 };
 
+double getStDev(std::vector<double> samples) {
+    double stDev;
+    double sum{0.0};
+    double sqsum{0.0};
+    double avg;
+    size_t nsamples = samples.size();
+  
+    for (int idx{0}; idx < samples.size(); idx++) {
+      sum += samples[idx];
+    }
+    avg = sum / samples.size();
+  
+    for (int idx{0}; idx < nsamples; idx++) {
+      samples[idx] = std::pow(samples[idx] - avg, 2);
+    }
+  
+    for (int idx{0}; idx < nsamples; idx++) {
+      sqsum += samples[idx];
+    }
+  
+    return sqsum / nsamples;
+  }
+
 
 int main(){
+    const char* filepath = "./data/iris.csv";
+    std::vector<std::vector<std::string>> csvData = loadCSV(filepath);
+    std::vector<std::vector<double>> featuresData = loadNumericFeatures(csvData);
+    std::vector<std::string> strTargets = getTargetColumn(csvData);
+    std::vector<int> targets = encodeTargets(strTargets);
+    DecisionTree decTree = DecisionTree(1,3);
+    Matrix features = Matrix{featuresData, featuresData.size(), featuresData[0].size()};
+
+
+
+
     std::cout << "Decision Tree" << "\n";
     std::cout << "-----------------" << "\n";
-    int val = -1;
-    int f = 0;
-    double t = 0.5;
 
 
+  
+    int iterations = 1000;
+    double sum{0};
+    std::vector<double> samples;
+  
+    for (int idx{0}; idx < iterations; idx++) {
+      auto start = std::chrono::steady_clock::now();
+      decTree.fit(features, targets);
+      std::vector<int> preds = decTree.predict(features);      
+      auto end = std::chrono::steady_clock::now();
+      std::chrono::duration<double, std::milli> dur = end - start;
+  
+      // std::cout << "Total Time (ns): " << dur.count() << "\n";
+      double duration = dur.count();
+      sum += duration;
+      samples.push_back(duration);
+    }
+  
+    double stDev = getStDev(samples);
+    std::cout << "Data Size: " << features.rows << " elements" << "\n";
+    std::cout << "Total Time (ms): " << sum << "\n";
+    std::cout << "Average Iteration Time (ms): " << sum / iterations << "\n";
+    std::cout << "StDev (ms): +/- " << stDev << "\n";
 }
