@@ -44,3 +44,4 @@ Machine Learning Models Implemented in C++
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | decTree | Iris (n=150) | 4 | 1000 | 7674.14  | 7.67414 | 1.11896 | No optimizations | g++ -O0 |
 | decTree Refs | Iris (n=150) | 4 | 1000 | 4527.37  | 4.52737 | 0.0581833 | Ref args | g++ -O0 |
+| decTreeReserve | Iris (n=150) | 4 | 1000 | 3550.82  | 3.55082 | 0.00171164 | Ref args | g++ -O0 |

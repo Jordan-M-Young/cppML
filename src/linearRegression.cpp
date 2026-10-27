@@ -278,33 +278,6 @@ double getStDev(std::vector<double>& samples) {
 
 
 
-  void printVecString(std::vector<std::string> &vec) {
-    std::cout << "[ ";
-    for (size_t idx{0}; idx < vec.size(); idx++) {
-        std::string cell = vec[idx];
-        
-        // Clean out any hidden carriage returns causing terminal overwrite
-        if (!cell.empty() && cell.back() == '\r') {
-            cell.pop_back();
-        }
-        
-        std::cout << cell;
-        if (idx < vec.size() - 1) {
-            std::cout << ", ";
-        }
-    }
-    std::cout << " ]\n";
-}
-
-void printVecVecString(std::vector<std::vector<std::string>> &vecVec) {
-    std::cout << "[\n";
-    for (size_t idx{0}; idx < vecVec.size(); idx++) {
-        std::cout << "  "; // Indent rows for readability
-        printVecString(vecVec[idx]);
-    }
-}
-
-
 Matrix getTargets(std::vector<std::vector<std::string>> &csvData){
     std::vector<std::vector<double>> targets;
 
