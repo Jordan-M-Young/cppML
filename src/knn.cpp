@@ -8,8 +8,9 @@
 
 double euclideanDistance(std::vector<double>& vecA, std::vector<double>& vecB){
     double dist{0.0};
+    double diff;
     for (int idx{0}; idx < vecA.size(); idx++){
-        double diff = (vecA[idx]-vecB[idx]);
+        diff = (vecA[idx]-vecB[idx]);
         dist += (diff * diff);
     }
     return std::sqrt(dist);
