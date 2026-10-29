@@ -6,7 +6,7 @@
 #include <ctime>
 #include <chrono>
 
-double euclideanDistance(std::vector<double> vecA, std::vector<double> vecB){
+double euclideanDistance(std::vector<double>& vecA, std::vector<double>& vecB){
     double dist{0.0};
     for (int idx{0}; idx < vecA.size(); idx++){
         dist += pow((vecA[idx]-vecB[idx]),2);
@@ -43,11 +43,12 @@ public:
 std::vector<std::vector<double>> features;
 std::vector<int> targets;
 
-kNearestNeighbors(std::vector<std::vector<double>> features, std::vector<int> targets) : features(features), targets(targets) {}
+kNearestNeighbors(std::vector<std::vector<double>>& features, std::vector<int>& targets) : features(features), targets(targets) {}
 
-std::vector<Pair> getKNearest(std::vector<double> sample, int k){
+std::vector<Pair> getKNearest(std::vector<double>& sample, int k){
 
     std::vector<Pair> pairs;
+    pairs.reserve(targets.size());
 
     for (int jdx{0}; jdx < features.size(); jdx++) {
         double dist = euclideanDistance(sample,features[jdx]);
@@ -62,7 +63,7 @@ std::vector<Pair> getKNearest(std::vector<double> sample, int k){
 };
 
 
-std::vector<double> predictProba(std::vector<double> sample, int k){
+std::vector<double> predictProba(std::vector<double>& sample, int k){
     std::vector<Pair> pairs = getKNearest(sample, k);
     std::vector<int> selectedTargs;
     for (auto pair : pairs){

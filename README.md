@@ -52,3 +52,4 @@ Machine Learning Models Implemented in C++
 | Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  | Compiler/Opt |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | knn | Random(10,000) | 10 | 1000 | 7658.64  | 7.65864 | 0.739412 | No optimizations | g++ -O0 |
+| knn-refsreserve | Random(10,000) | 10 | 1000 | 3452.65  | 3.45265 | 0.0180376 | Ref Args; Vector Reserves | g++ -O0 |
