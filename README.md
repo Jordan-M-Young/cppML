@@ -53,3 +53,4 @@ Machine Learning Models Implemented in C++
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
 | knn | Random(10,000) | 10 | 1000 | 7658.64  | 7.65864 | 0.739412 | No optimizations | g++ -O0 |
 | knn-refsreserve | Random(10,000) | 10 | 1000 | 3452.65  | 3.45265 | 0.0180376 | Ref Args; Vector Reserves | g++ -O0 |
+| knn-removepow | Random(10,000) | 10 | 1000 | 1576.22  | 1.57622 | 0.00610379 | Replaced pow function | g++ -O0 |

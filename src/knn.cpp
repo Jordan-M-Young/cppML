@@ -9,9 +9,10 @@
 double euclideanDistance(std::vector<double>& vecA, std::vector<double>& vecB){
     double dist{0.0};
     for (int idx{0}; idx < vecA.size(); idx++){
-        dist += pow((vecA[idx]-vecB[idx]),2);
+        double diff = (vecA[idx]-vecB[idx]);
+        dist += (diff * diff);
     }
-    return pow(dist, 0.5);
+    return std::sqrt(dist);
 }
 
 template <typename T>
