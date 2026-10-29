@@ -27,8 +27,6 @@ struct Matrix {
 
 
 
-
-
 template <typename T>
 std::vector<T> getUnique(std::vector<T>& vec){
     std::unordered_set<T> valSet;
@@ -206,13 +204,13 @@ public:
         double splitThreshold = 0.0;
         double n = targets.size();
 
+        double parentEntropy = entropy(targets);
 
         for (int featIdx{0}; featIdx < features.cols; featIdx++){
             std::vector<double> featColumn = getMatrixCol(features, featIdx);
             std::vector<double> thresholds = getUnique(featColumn);
             
             for (int tIdx{0}; tIdx < thresholds.size(); tIdx++){
-                double parentEntropy = entropy(targets);
                 IndexSplitResult indexSplit = splitOnThreshold(featColumn, thresholds[tIdx]);
                 std::vector<int> leftIdxs = indexSplit.left;
                 std::vector<int> rightIdxs = indexSplit.right;
@@ -305,6 +303,9 @@ public:
         return node;
     }
     double entropy(std::vector<int>& vec){
+        if (vec.empty()){
+            return 0.0;
+        }
         std::vector<double> binCounter = binCount(vec);
         std::vector<double> scaledBinCounter = scalarDivide(binCounter, vec.size());
         std::vector<double> logvals = applyPLog2(scaledBinCounter);
@@ -313,6 +314,7 @@ public:
     }
 
     void fit(Matrix& features, std::vector<int>& targets){
+        clearTree(root);
         root = growTree(features, targets, 0);
     }
 
@@ -331,7 +333,7 @@ public:
     std::vector<int> predict(Matrix& features){
         std::vector<int> preds;
         preds.reserve(features.rows);
-        for (auto row : features.data){
+        for (auto& row : features.data){
             int pred = traverseTree(row, root);
             preds.push_back(pred);
         }
@@ -378,12 +380,15 @@ double getStDev(std::vector<double> samples) {
 
 
 int main(){
+
+    // There are many algorithms for decision tree induction: Hunts Algorithm, CART, ID3, C4.5, SLIQ, SPRINT
+    
     const char* filepath = "./data/iris.csv";
     std::vector<std::vector<std::string>> csvData = loadCSV(filepath);
     std::vector<std::vector<double>> featuresData = loadNumericFeatures(csvData);
     std::vector<std::string> strTargets = getTargetColumn(csvData);
     std::vector<int> targets = encodeTargets(strTargets);
-    DecisionTree decTree = DecisionTree(1,3);
+    DecisionTree decTree = DecisionTree(2,3);
     Matrix features = Matrix{featuresData, featuresData.size(), featuresData[0].size()};
 
 
