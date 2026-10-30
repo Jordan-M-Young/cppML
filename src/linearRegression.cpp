@@ -253,31 +253,6 @@ Matrix linearRegression(Matrix& features, Matrix& targets){
       return betas.value();
 }
 
-double getStDev(std::vector<double>& samples) {
-    double stDev;
-    double sum{0.0};
-    double sqsum{0.0};
-    double avg;
-    size_t nsamples = samples.size();
-  
-    for (int idx{0}; idx < samples.size(); idx++) {
-      sum += samples[idx];
-    }
-    avg = sum / samples.size();
-  
-    for (int idx{0}; idx < nsamples; idx++) {
-      samples[idx] = std::pow(samples[idx] - avg, 2);
-    }
-  
-    for (int idx{0}; idx < nsamples; idx++) {
-      sqsum += samples[idx];
-    }
-  
-    return sqsum / nsamples;
-  }
-
-
-
 Matrix getTargets(std::vector<std::vector<std::string>> &csvData){
     std::vector<std::vector<double>> targets;
 

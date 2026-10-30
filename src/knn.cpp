@@ -5,7 +5,7 @@
 #include <random>
 #include <ctime>
 #include <chrono>
-
+#include "utils.h"
 
 template <int Cols>
 double euclideanDistance(std::array<double,Cols>& vecA, std::array<double,Cols>& vecB){
@@ -120,31 +120,6 @@ RandomVecData<Rows, Cols> genRandomVecData(int nClasses){
 
 
 }
-
-
-double getStDev(std::vector<double> samples) {
-    double stDev;
-    double sum{0.0};
-    double sqsum{0.0};
-    double avg;
-    size_t nsamples = samples.size();
-  
-    for (int idx{0}; idx < samples.size(); idx++) {
-      sum += samples[idx];
-    }
-    avg = sum / samples.size();
-  
-    for (int idx{0}; idx < nsamples; idx++) {
-      samples[idx] = std::pow(samples[idx] - avg, 2);
-    }
-  
-    for (int idx{0}; idx < nsamples; idx++) {
-      sqsum += samples[idx];
-    }
-  
-    return sqsum / nsamples;
-  }
-
 
 int main(){
     const int k = 10;

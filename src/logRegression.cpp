@@ -3,6 +3,8 @@
 #include <iostream>
 #include <numbers>
 #include <vector>
+#include "utils.h"
+
 double sigmoid(double z) {
   double e = std::numbers::e;
   return 1.0 / (1 + pow(e, -z));
@@ -155,28 +157,6 @@ void printVec(std::vector<double> vec) {
   std::cout << "]" << "\n";
 }
 
-double getStDev(std::vector<double> samples) {
-  double stDev;
-  double sum{0.0};
-  double sqsum{0.0};
-  double avg;
-  size_t nsamples = samples.size();
-
-  for (int idx{0}; idx < samples.size(); idx++) {
-    sum += samples[idx];
-  }
-  avg = sum / samples.size();
-
-  for (int idx{0}; idx < nsamples; idx++) {
-    samples[idx] = std::pow(samples[idx] - avg, 2);
-  }
-
-  for (int idx{0}; idx < nsamples; idx++) {
-    sqsum += samples[idx];
-  }
-
-  return sqsum / nsamples;
-}
 int main() {
 
   std::vector<std::vector<double>> featureData = {

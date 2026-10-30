@@ -5,3 +5,4 @@ template <typename T>
 void printVec(std::vector<T> vec);
 template <typename T>
 void printVecVec(std::vector<std::vector<double>> vecVec);
+double getStDev(std::vector<double> samples);
