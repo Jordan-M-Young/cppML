@@ -15,6 +15,7 @@ Machine Learning Models Implemented in C++
 | preallocate-vector | Iris (n=150) | 3 | 1000 | 960.514  | 0.960514 | 0.138862 | Reserve vector sizes  | g++ -O0 |
 | try-stack-allocation | Iris (n=150) | 3 | 1000 | 382.588  | 0.382588 | 0.0168277 | swap vectors for presized arrays via templates; user unfriendly  | g++ -O0 |
 | try-stack-allocation | Iris (n=150) | 3 | 1000 | 12.7214  | 0.0127214 | 4.79619e-05 |  same impl; optimized binary  | g++ -O2 |
+
 ## Regression
 
 ### Linear Regression
@@ -55,4 +56,5 @@ Machine Learning Models Implemented in C++
 | knn-refsreserve | Random(10,000) | 10 | 1000 | 3452.65  | 3.45265 | 0.0180376 | Ref Args; Vector Reserves | g++ -O0 |
 | knn-removepow | Random(10,000) | 10 | 1000 | 1561.8  | 1.5618 | 0.00231417 | Replaced pow function | g++ -O0 |
 | knn-array | Random(10,000) | 10 | 1000 | 1331.49  | 1.33149 | 0.00511735 | Template sized arrays | g++ -O0 |
-| knn-array | Random(10,000) | 10 | 1000 | 454.174  | 0.454174 | 0.00511735 | Template sized arrays | g++ -O2 |
+| knn-partial-sort | Random(10,000) | 10 | 1000 | 414.443  | 0.414443 | 0.00217342 | sort smallest k elements only | g++ -O0 |
+| knn-partial-sort | Random(10,000) | 10 | 1000 | 40.989  | 0.040989 | 0.000193135 | sort smallest k elements only | g++ -O2 |

@@ -60,9 +60,11 @@ public:
             pairs[jdx] = Pair{dist, jdx};
         }
 
-        std::sort(pairs.begin(), pairs.end(), [](const Pair& a, const Pair& b) {
+        std::partial_sort(pairs.begin(), pairs.begin() + k, pairs.end(), 
+        [](const Pair& a, const Pair& b) {
             return a.dist < b.dist;
-        });
+        }
+    );
         
         std::array<Pair, k> result;
         std::copy(pairs.begin(), pairs.begin() + k, result.begin());
@@ -90,7 +92,7 @@ struct RandomVecData{
 };
 
 template <int Rows, int Cols>
-RandomVecData<Rows, Cols> genRandomVecData(int nFeatures, int nSamples, int nClasses){
+RandomVecData<Rows, Cols> genRandomVecData(int nClasses){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int>  intDist(0, nClasses-1);
@@ -99,15 +101,15 @@ RandomVecData<Rows, Cols> genRandomVecData(int nFeatures, int nSamples, int nCla
     std::array<std::array<double,Cols>,Rows> features;
     std::array<int,Rows> targets;
 
-    for (int sIdx{0}; sIdx < nSamples; sIdx++){
-        for (int fIdx{0}; fIdx < nFeatures; fIdx++){
+    for (int sIdx{0}; sIdx < Rows; sIdx++){
+        for (int fIdx{0}; fIdx < Cols; fIdx++){
             features[sIdx][fIdx] = dDist(gen);
         }
         targets[sIdx] = intDist(gen);
     }
 
     std::array<double,Cols> randomSample;
-    for (int fIdx{0}; fIdx < nFeatures; fIdx++){
+    for (int fIdx{0}; fIdx < Cols; fIdx++){
         randomSample[fIdx] = dDist(gen);
     } 
 
@@ -151,7 +153,7 @@ int main(){
     const int nSamples = 10000;
 
 
-    RandomVecData<nSamples, nFeatures> vecData = genRandomVecData<nSamples, nFeatures>(nFeatures, nSamples, nClasses);
+    RandomVecData<nSamples, nFeatures> vecData = genRandomVecData<nSamples, nFeatures>(nClasses);
 
     auto knn = kNearestNeighbors<nSamples, nFeatures, k>(vecData.features, vecData.targets);
 
