@@ -11,13 +11,6 @@
 #include "utils.h"
 
 
-template <int Rows, int Cols>
-void printVecVec(std::array<std::array<double,Cols>,Rows> vecVec) {
-  for (int i{0}; i < Rows; i++) {
-    printVec<Cols>(vecVec[i]);
-  }
-}
-
 template<int Cols>
 double cartesianDistance(std::array<double,Cols> &a, std::array<double,Cols> &b) {
   double sqsum{0};
@@ -239,29 +232,6 @@ std::array<std::array<double,Cols2Keep>,Rows2Keep>loadNumericFeatures(std::array
   }
 
   return numericFeatures;
-}
-
-double getStDev(std::vector<double> samples) {
-  double stDev;
-  double sum{0.0};
-  double sqsum{0.0};
-  double avg;
-  size_t nsamples = samples.size();
-
-  for (int idx{0}; idx < samples.size(); idx++) {
-    sum += samples[idx];
-  }
-  avg = sum / samples.size();
-
-  for (int idx{0}; idx < nsamples; idx++) {
-    samples[idx] = std::pow(samples[idx] - avg, 2);
-  }
-
-  for (int idx{0}; idx < nsamples; idx++) {
-    sqsum += samples[idx];
-  }
-
-  return sqsum / nsamples;
 }
 
 int main() {
