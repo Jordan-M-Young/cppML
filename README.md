@@ -52,10 +52,11 @@ Machine Learning Models Implemented in C++
 ### KNearestNeighbors
 | Implementation | Dataset | N Features | Iterations | Total Time (ms) | Avg Iteration Time (ms) | StDev | Notes  | Compiler/Opt |
 | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
-| knn | Random(10,000) | 10 | 1000 | 7658.64  | 7.65864 | 0.739412 | No optimizations | g++ -O0 |
-| knn-refsreserve | Random(10,000) | 10 | 1000 | 3452.65  | 3.45265 | 0.0180376 | Ref Args; Vector Reserves | g++ -O0 |
-| knn-removepow | Random(10,000) | 10 | 1000 | 1561.8  | 1.5618 | 0.00231417 | Replaced pow function | g++ -O0 |
-| knn-array | Random(10,000) | 10 | 1000 | 1331.49  | 1.33149 | 0.00511735 | Template sized arrays | g++ -O0 |
-| knn-partial-sort | Random(10,000) | 10 | 1000 | 414.443  | 0.414443 | 0.00217342 | sort smallest k elements only | g++ -O0 |
-| knn-const-args | Random(10,000) | 10 | 1000 | 404.047  | 0.404 | 0.00010546 | const args | g++ -O0 |
-| knn-const-args | Random(10,000) | 10 | 1000 | 36.809  | 0.036 | 1.23533e-05 | const args | g++ -O2 |
+| knn<sup>1</sup> | Random(10,000) | 10 | 1000 | 7658.64  | 7.65864 | 0.739412 | No optimizations | g++ -O0 |
+| knn-refsreserve<sup>1</sup> | Random(10,000) | 10 | 1000 | 3452.65  | 3.45265 | 0.0180376 | Ref Args; Vector Reserves | g++ -O0 |
+| knn-removepow<sup>1</sup> | Random(10,000) | 10 | 1000 | 1561.8  | 1.5618 | 0.00231417 | Replaced pow function | g++ -O0 |
+| knn-array<sup>1</sup> | Random(10,000) | 10 | 1000 | 1331.49  | 1.33149 | 0.00511735 | Template sized arrays | g++ -O0 |
+| knn-partial-sort<sup>1</sup> | Random(10,000) | 10 | 1000 | 414.443  | 0.414443 | 0.00217342 | sort smallest k elements only | g++ -O0 |
+| knn-const-args<sup>1</sup> | Random(10,000) | 10 | 1000 | 404.047  | 0.404 | 0.00010546 | const args | g++ -O0 |
+| knn-const-args<sup>1</sup> | Random(10,000) | 10 | 1000 | 36.809  | 0.036 | 1.23533e-05 | const args | g++ -O2 |
+Brute Force Search<sup>1</sup>
