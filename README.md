@@ -59,4 +59,5 @@ Machine Learning Models Implemented in C++
 | knn-partial-sort<sup>1</sup> | Random(10,000) | 10 | 1000 | 414.443  | 0.414443 | 0.00217342 | sort smallest k elements only | g++ -O0 |
 | knn-const-args<sup>1</sup> | Random(10,000) | 10 | 1000 | 404.047  | 0.404 | 0.00010546 | const args | g++ -O0 |
 | knn-const-args<sup>1</sup> | Random(10,000) | 10 | 1000 | 36.809  | 0.036 | 1.23533e-05 | const args | g++ -O2 |
+
 Brute Force Search<sup>1</sup>
