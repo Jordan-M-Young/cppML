@@ -57,4 +57,5 @@ Machine Learning Models Implemented in C++
 | knn-removepow | Random(10,000) | 10 | 1000 | 1561.8  | 1.5618 | 0.00231417 | Replaced pow function | g++ -O0 |
 | knn-array | Random(10,000) | 10 | 1000 | 1331.49  | 1.33149 | 0.00511735 | Template sized arrays | g++ -O0 |
 | knn-partial-sort | Random(10,000) | 10 | 1000 | 414.443  | 0.414443 | 0.00217342 | sort smallest k elements only | g++ -O0 |
-| knn-partial-sort | Random(10,000) | 10 | 1000 | 35.7876  | 0.0357876 | 5.04286e-05 | sort smallest k elements only | g++ -O2 |
+| knn-const-args | Random(10,000) | 10 | 1000 | 404.047  | 0.404 | 0.00010546 | const args | g++ -O0 |
+| knn-const-args | Random(10,000) | 10 | 1000 | 36.809  | 0.036 | 1.23533e-05 | const args | g++ -O2 |
